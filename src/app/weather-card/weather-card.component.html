@@ -1,0 +1,111 @@
+
+    <div *ngIf="loaded" class="sk-circle">
+        <div class="sk-circle1 sk-child"></div>
+        <div class="sk-circle2 sk-child"></div>
+        <div class="sk-circle3 sk-child"></div>
+        <div class="sk-circle4 sk-child"></div>
+        <div class="sk-circle5 sk-child"></div>
+        <div class="sk-circle6 sk-child"></div>
+        <div class="sk-circle7 sk-child"></div>
+        <div class="sk-circle8 sk-child"></div>
+        <div class="sk-circle9 sk-child"></div>
+        <div class="sk-circle10 sk-child"></div>
+        <div class="sk-circle11 sk-child"></div>
+        <div class="sk-circle12 sk-child"></div>
+      </div>
+
+
+<form [formGroup]="searchForm">
+  <input
+    type="text"
+    formControlName="search"
+    placeholder="City Search"
+    (input)="onChange($event)"
+  />
+
+  <ul style="list-style-type:none;">
+    <li
+      *ngFor="let option of options"
+      [value]="option?.LocalizedName"
+      (mousedown)="getWeather(option?.Key, option?.LocalizedName)">
+      {{ option?.LocalizedName }}
+  </li>
+  </ul>
+
+</form>
+
+<hr />
+<div class="weather-contine">
+  <div class="container">
+    <div class="widget">
+      <div class="details" *ngIf="!metric">
+        <div class="temperature">{{ displayWeather?.city }}</div>
+        <div class="temperature">{{ displayWeather?.weatherText }}</div>
+        <img
+          class="pictoCloudBig"
+          src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
+            displayWeather?.WeatherIcon
+          }}.svg"
+        />
+        <div class="temperature">
+          {{ displayWeather?.Temperature?.Imperial?.Value }}
+          {{ displayWeather?.Temperature?.Imperial?.Unit }}
+        </div>
+      </div>
+      <div class="details" *ngIf="metric">
+        <div class="temperature">{{ displayWeather?.city }}</div>
+        <div class="temperature">{{ displayWeather?.weatherText }}</div>
+        <img
+          class="pictoCloudBig"
+          src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
+            displayWeather?.WeatherIcon
+          }}.svg"
+        />
+        <div class="temperature">
+          {{ displayWeather?.Temperature?.Metric?.Value }}
+          {{ displayWeather?.Temperature?.Metric?.Unit }}
+        </div>
+      </div>
+      <div class="like">
+          <i
+          style='font-size:30px'
+          class="fa fa-heart-o"
+          aria-hidden="true"
+          
+          (click)="addToFavorite()" *ngIf="!exist"
+        ></i>
+        <i
+        style='font-size:30px'
+        (click)="removeFromFavorite()" *ngIf="exist"
+        class="fa fa-heart"
+        aria-hidden="true"
+        [ngStyle]="exist && { color: 'red' }"
+      ></i>
+      </div>
+    </div>
+  </div>
+</div>
+
+<hr />
+<h2 class="upHeading">Up Coming</h2>
+<div class="weather__wrapper">
+  <div class="weather__cont" *ngFor="let day of fiveDayWeather">
+    <h4>{{ day.Date }}</h4>
+    <img
+      class="weather-icon"
+      src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
+        day?.Day.Icon
+      }}.svg"
+    />
+    <br />
+    <h4>
+      {{ day?.Day?.IconPhrase }}<br />
+      <br/>
+      {{ day?.Temperature?.Minimum?.Value }}
+      /
+      {{ day?.Temperature?.Maximum?.Value }}
+      {{ day?.Temperature?.Maximum?.Unit }}<br />
+    </h4>
+  </div>
+</div>
+

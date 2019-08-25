@@ -1,0 +1,23 @@
+<hr>
+<h2 class="upHeading">My Fevorites</h2>
+<div class="weather__wrapper" *ngIf="exists">
+    <div class="weather__cont" *ngFor="let city of favoriteCities">
+      <div (click)="moreInfoCity(city.city, city.key)">
+        <h3>{{city.city}}</h3>
+    <img
+      class="weather-icon"
+      src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
+        city?.WeatherIcon
+      }}.svg"
+    />
+    <br />
+    <h4>
+       
+        <p>{{city.weatherText}}</p>
+        <p *ngIf="!unit"> {{city.Temperature.Imperial.Value}} {{city.Temperature.Imperial.Unit}}</p><br>
+        <p *ngIf="unit"> {{city.Temperature.Metric.Value}} {{city.Temperature.Metric.Unit}}</p>
+      {{ day?.Temperature?.Maximum?.Unit }}<br />
+    </h4>
+  </div>
+</div>
+</div>
