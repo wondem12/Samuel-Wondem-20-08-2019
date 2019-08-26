@@ -18,6 +18,11 @@ import { FormGroup, Validators, FormControl } from "@angular/forms";
   styleUrls: ["./weather-card.component.css"]
 })
 export class WeatherCardComponent implements OnInit {
+  public currentSubscribe: Subscription;
+  public dataToSubscribe: Subscription;
+  private ngUnsubscribe: Subject<void> = new Subject<void>();
+  private currentWeather$: Subject<void> = new Subject<void>();
+
   public searchForm: FormGroup;
 
   public fiveDayWeather: FiveDaysModel;
@@ -25,72 +30,31 @@ export class WeatherCardComponent implements OnInit {
   public displayWeather: CityModel;
   public favoriteCities: CityModel[] = [];
   public metric: boolean;
-  public currentCity: string;
   public defaultKey: string;
   public defaultCity: string;
   public loaded: boolean;
   public exist: boolean;
   public unit: boolean;
-  public choose: boolean;
-  public options: AutoCompleteModel[];
+  public suggestions: AutoCompleteModel[];
 
-
-  public currentSubscribe: Subscription;
-  public dataToSubscribe: Subscription;
-  private ngUnsubscribe: Subject<void> = new Subject<void>();
-  private currentWeather$: Subject<void> = new Subject<void>();
-
-  constructor(
-    private shareDataService: Data,
-    private store: Store<fromRoot.State>
-  ) {
-    this.loaded=true;
+  constructor(private Data: Data, private store: Store<fromRoot.State>) {
+    this.loaded = true;
     this.metric = true;
     this.exist = false;
-    this.choose = false;
   }
-  days = [
-    "Sunday",
-    "Monday",
-    "Tuesday",
-    "Wednesday",
-    "Thursday",
-    "Friday",
-    "Saturday"
-  ];
 
+  //Init
   ngOnInit() {
-    this.onLoadComponent();
+    this.onLoad();
     this.searchForm = new FormGroup({
       search: new FormControl("", {
         validators: [Validators.required]
       })
     });
   }
-  onInputChange($event): void {
-    var input = $event.target.value;
-    if (input === "") {
-      this.options = [];
-    } else {      
-      this.getAutoComplete(input);
-    }
-  }
-  getAutoComplete(input: string) {
-    this.store.dispatch(new weatherActions.GetAutoCompleteCities(input));
-    this.dataToSubscribe = this.store
-      .select(fromRoot.getWeatherData)
-      .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(data => {
-        if (data.loaded) {
-          this.options = data.data;
-        }
-      });
-  }
-
-  onLoadComponent(): void {
-    // A function to organize
+  onLoad(): void {
     this.setData();
-    this.shareDataService.currentCity.subscribe(response => {
+    this.Data.currentCity.subscribe(response => {
       if (response) {
         this.loaded = false;
         const data = {
@@ -99,13 +63,35 @@ export class WeatherCardComponent implements OnInit {
         };
         this.getWeather(data.key, data.city);
       } else {
-        this.showMyLocation();
+        this.showGeoLocation();
       }
     });
   }
 
-  showMyLocation(): void {
-    // This function allows the user to use his location for the weather if the user does not get the weather from Tel Aviv
+  //Search
+  onInputChange($event): void {
+    var input = $event.target.value;
+    if (input === "") {
+      this.suggestions = [];
+    } else {
+      this.getAutoComplete(input);
+    }
+  }
+  //
+  getAutoComplete(input: string) {
+    this.store.dispatch(new weatherActions.GetAutoCompleteCities(input));
+    this.dataToSubscribe = this.store
+      .select(fromRoot.getWeatherData)
+      .pipe(takeUntil(this.ngUnsubscribe))
+      .subscribe(data => {
+        if (data.loaded) {
+          this.suggestions = data.data;
+        }
+      });
+  }
+
+  //Location
+  showGeoLocation(): void {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         position => {
@@ -116,72 +102,68 @@ export class WeatherCardComponent implements OnInit {
           const dataToSubscribeGeo = this.store
             .select(fromRoot.getGeoLocationData)
             .pipe(takeUntil(this.ngUnsubscribe))
-            .subscribe(
-              data => {
-                if (data.loaded) {
-                  localStorage.setItem(
-                    "response",
-                    JSON.parse(JSON.stringify(data.data))
-                  );
-                  this.defaultKey = data.data.Key;
-                  this.defaultCity = data.data.LocalizedName;
-                  this.getWeather(data.data.Key, data.data.LocalizedName);
-                  dataToSubscribeGeo.unsubscribe();
-                }
-              },
-              error => {}
-            );
+            .subscribe(data => {
+              if (data.loaded) {
+                this.defaultKey = data.data.Key;
+                this.defaultCity = data.data.LocalizedName;
+                this.getWeather(data.data.Key, data.data.LocalizedName);
+                dataToSubscribeGeo.unsubscribe();
+              }
+            });
         },
         () => {
           this.getWeather(this.defaultKey, this.defaultCity);
-          this.checkSpecificCityExists(this.defaultCity);
+          this.checkSpecificCity(this.defaultCity);
         }
       );
     }
   }
 
+  //Get Current Weather
   getWeather(key: string, city: string): void {
-    this.loaded=false;
-    this.choose = true;
+    this.loaded = false;
     this.displayWeather.city = city;
-    this.checkSpecificCityExists(city);
+    this.checkSpecificCity(city);
     const intKey = Number(key);
+    this.getFiveDayWeather(intKey);
     this.store.dispatch(new weatherActions.GetCurrentWeather(intKey));
     this.currentSubscribe = this.store
       .select(fromRoot.getWeatherData)
       .pipe(takeUntil(this.currentWeather$))
-      .subscribe(
-        data => {
-          if (data.loaded ) {
-            this.currentWeather = data.data[0];
-            this.assignWeatherCityData(intKey);
-            this.getFiveDayWeather(intKey);
-          }
+      .subscribe(data => {
+        if (data.loaded) {
+          this.currentWeather = data.data[0];
+          this.weatherCityData(intKey);
         }
-      );
+      });
   }
 
+  //Five Days Weather
   getFiveDayWeather(key: number): void {
+    const days = [
+      "Sunday",
+      "Monday",
+      "Tuesday",
+      "Wednesday",
+      "Thursday",
+      "Friday",
+      "Saturday"
+    ];
     this.store.dispatch(new weatherActions.GetFiveDayWeather(key, this.metric));
     this.dataToSubscribe = this.store
       .select(fromRoot.getFiveDayWeatherData)
       .pipe(takeUntil(this.ngUnsubscribe))
-      .subscribe(
-        data => {
-          if (data.loaded) {
-            if (this.choose) {
-              data.data.DailyForecasts.forEach(day => {
-                day.Date = this.days[new Date(day.Date).getDay()];
-              });
-              this.fiveDayWeather = data.data.DailyForecasts;
-              this.changeUnit();
-            }
-          }
-        },
-        error => {}
-      );
+      .subscribe(data => {
+        if (data.loaded) {
+          data.data.DailyForecasts.forEach(day => {
+            day.Date = days[new Date(day.Date).getDay()];
+          });
+          this.fiveDayWeather = data.data.DailyForecasts;
+        }
+      });
   }
 
+  //Change Unit
   changeUnit(): void {
     let i = 0;
     let value = 0;
@@ -230,14 +212,16 @@ export class WeatherCardComponent implements OnInit {
     }
   }
 
+  //Add to the favorites
   addToFavorite(): void {
-    this.checkFavoriteCitiesExists();
+    this.checkIfExists();
     this.favoriteCities.push(this.displayWeather);
     localStorage.setItem("cities", JSON.stringify(this.favoriteCities));
-    this.checkSpecificCityExists(this.displayWeather.city);
+    this.checkSpecificCity(this.displayWeather.city);
   }
+  //Remove to the favorites
   removeFromFavorite(): void {
-    this.checkFavoriteCitiesExists();
+    this.checkIfExists();
     const index = this.favoriteCities.findIndex(
       city => city.city === this.displayWeather.city
     );
@@ -245,16 +229,15 @@ export class WeatherCardComponent implements OnInit {
       this.favoriteCities.splice(index, 1);
       localStorage.removeItem("cities");
       localStorage.setItem("cities", JSON.stringify(this.favoriteCities));
-      this.checkSpecificCityExists(this.displayWeather.city);
+      this.checkSpecificCity(this.displayWeather.city);
     }
   }
-  checkFavoriteCitiesExists(): void {
+  checkIfExists(): void {
     if (JSON.parse(localStorage.getItem("cities"))) {
       this.favoriteCities = JSON.parse(localStorage.getItem("cities"));
-      
     }
   }
-  checkSpecificCityExists(city: string): void {
+  checkSpecificCity(city: string): void {
     const index = this.favoriteCities.find(
       arrayCity => arrayCity.city === city
     );
@@ -293,7 +276,7 @@ export class WeatherCardComponent implements OnInit {
     };
   }
 
-  assignWeatherCityData(intKey: number): void {
+  weatherCityData(intKey: number): void {
     this.displayWeather.key = intKey;
     this.displayWeather.dayTime = this.currentWeather.IsDayTime;
     this.displayWeather.Temperature = this.currentWeather.Temperature;
@@ -302,20 +285,12 @@ export class WeatherCardComponent implements OnInit {
   }
 
   setData(): void {
-    this.shareDataService.currentTempValue.subscribe(
-      response => {
-        this.unit = response;
-        this.metric = response;
-        this.changeUnit();
-      }
-    );
-  
+    this.Data.currentTempValue.subscribe(response => {
+      this.unit = response;
+      this.metric = response;
+      this.changeUnit();
+    });
     this.setModel();
-    this.checkFavoriteCitiesExists();
-  }
-
-  ngOnDestroy() {
-    this.dataToSubscribe.unsubscribe();
-    this.currentSubscribe.unsubscribe();
+    this.checkIfExists();
   }
 }

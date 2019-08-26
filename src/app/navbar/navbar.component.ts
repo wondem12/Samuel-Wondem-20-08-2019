@@ -9,6 +9,7 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent implements OnInit {
   unit: boolean;
+  color:boolean;
 
   constructor(private router: Router, private DataService: Data) {
     this.unit = false;
@@ -16,6 +17,7 @@ export class NavbarComponent implements OnInit {
 
   ngOnInit() {
     this.onLoadComponent();
+    this.color=true;
   }
   onLoadComponent() {
     this.router.navigate(['/']);
@@ -29,6 +31,7 @@ export class NavbarComponent implements OnInit {
       this.DataService.changeUnit(this.unit);
     }
   }
+
 
 }
 

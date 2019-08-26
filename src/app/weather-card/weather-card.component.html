@@ -13,29 +13,28 @@
         <div class="sk-circle11 sk-child"></div>
         <div class="sk-circle12 sk-child"></div>
       </div>
-
-
-<form [formGroup]="searchForm">
+      
+<form *ngIf="!loaded" [formGroup]="searchForm">
   <input
     type="text"
     formControlName="search"
-    placeholder="City Search"
-    (input)="onChange($event)"
+    placeholder="Search By City Name"
+    (input)="onInputChange($event)"
   />
 
   <ul style="list-style-type:none;">
     <li
-      *ngFor="let option of options"
-      [value]="option?.LocalizedName"
-      (mousedown)="getWeather(option?.Key, option?.LocalizedName)">
-      {{ option?.LocalizedName }}
+      *ngFor="let suggestion of suggestions"
+      [value]="suggestion?.LocalizedName"
+      (mousedown)="getWeather(suggestion?.Key, suggestion?.LocalizedName)">
+      {{ suggestion?.LocalizedName }}
   </li>
   </ul>
 
 </form>
 
 <hr />
-<div class="weather-contine">
+<div *ngIf="!loaded" class="weather-contine">
   <div class="container">
     <div class="widget">
       <div class="details" *ngIf="!metric">
@@ -87,10 +86,10 @@
 </div>
 
 <hr />
-<h2 class="upHeading">Up Coming</h2>
-<div class="weather__wrapper">
+<h2 *ngIf="!loaded" class="upHeading">Up Coming</h2>
+<div *ngIf="!loaded" class="weather__wrapper">
   <div class="weather__cont" *ngFor="let day of fiveDayWeather">
-    <h4>{{ day.Date }}</h4>
+    <h4 >{{ day.Date }}</h4>
     <img
       class="weather-icon"
       src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
@@ -108,4 +107,5 @@
     </h4>
   </div>
 </div>
+
 
