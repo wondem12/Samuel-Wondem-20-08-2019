@@ -7,7 +7,7 @@ import { Injectable } from "@angular/core";
 
 @Injectable({ providedIn: "root" })
 export class WeatherService {
-  Key = "OEGA12bifyY5meDkqq9KCTjnxlqm3cYq";
+  Key = "aV10RuA4FiN1gsLhbD6kWSzQzklwaHKY";
   Url = "http://dataservice.accuweather.com";
 
   constructor(private http: HttpClient) {}

@@ -38,31 +38,31 @@
   <div class="container">
     <div class="widget">
       <div class="details" *ngIf="!metric">
-        <div class="temperature">{{ displayWeather?.city }}</div>
-        <div class="temperature">{{ displayWeather?.weatherText }}</div>
+        <div class="temperature">{{ City?.city }}</div>
+        <div class="temperature">{{ City?.weatherText }}</div>
         <img
           class="pictoCloudBig"
           src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
-            displayWeather?.WeatherIcon
+            City?.WeatherIcon
           }}.svg"
         />
         <div class="temperature">
-          {{ displayWeather?.Temperature?.Imperial?.Value }}
-          {{ displayWeather?.Temperature?.Imperial?.Unit }}
+          {{ City?.Temperature?.Imperial?.Value }}
+          {{ City?.Temperature?.Imperial?.Unit }}
         </div>
       </div>
       <div class="details" *ngIf="metric">
-        <div class="temperature">{{ displayWeather?.city }}</div>
-        <div class="temperature">{{ displayWeather?.weatherText }}</div>
+        <div class="temperature">{{ City?.city }}</div>
+        <div class="temperature">{{ City?.weatherText }}</div>
         <img
           class="pictoCloudBig"
           src="https://vortex.accuweather.com/adc2010/images/slate/icons/{{
-            displayWeather?.WeatherIcon
+            City?.WeatherIcon
           }}.svg"
         />
         <div class="temperature">
-          {{ displayWeather?.Temperature?.Metric?.Value }}
-          {{ displayWeather?.Temperature?.Metric?.Unit }}
+          {{ City?.Temperature?.Metric?.Value }}
+          {{ City?.Temperature?.Metric?.Unit }}
         </div>
       </div>
       <div class="like">

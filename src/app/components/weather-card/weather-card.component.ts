@@ -2,14 +2,14 @@ import { Component, OnInit } from "@angular/core";
 import { Store } from "@ngrx/store";
 import { Subject, Subscription } from "rxjs";
 import { takeUntil } from "rxjs/operators";
-import * as fromRoot from "../app.reducer";
-import * as weatherActions from "../store/actions/weather.action";
+import * as fromRoot from "../../app.reducer";
+import * as weatherActions from "../../store/actions/weather.action";
 
-import { AutoCompleteModel } from "../store/models/autoComplete.model";
-import { CityModel } from "../store/models/city.model";
-import { WeatherModel } from "../store/models/weather.model";
-import { FiveDaysModel } from "../store/models/fiveDays.model";
-import { Data } from "../services/data.service";
+import { AutoCompleteModel } from "../../store/models/autoComplete.model";
+import { CityModel } from "../../store/models/city.model";
+import { WeatherModel } from "../../store/models/weather.model";
+import { FiveDaysModel } from "../../store/models/fiveDays.model";
+import { Data } from "../../services/data.service";
 import { FormGroup, Validators, FormControl } from "@angular/forms";
 
 @Component({
@@ -27,7 +27,7 @@ export class WeatherCardComponent implements OnInit {
 
   public fiveDayWeather: FiveDaysModel;
   public currentWeather: WeatherModel;
-  public displayWeather: CityModel;
+  public City: CityModel;
   public favoriteCities: CityModel[] = [];
   public metric: boolean;
   public defaultKey: string;
@@ -122,7 +122,7 @@ export class WeatherCardComponent implements OnInit {
   //Get Current Weather
   getWeather(key: string, city: string): void {
     this.loaded = false;
-    this.displayWeather.city = city;
+    this.City.city = city;
     this.checkSpecificCity(city);
     const intKey = Number(key);
     this.getFiveDayWeather(intKey);
@@ -215,21 +215,21 @@ export class WeatherCardComponent implements OnInit {
   //Add to the favorites
   addToFavorite(): void {
     this.checkIfExists();
-    this.favoriteCities.push(this.displayWeather);
+    this.favoriteCities.push(this.City);
     localStorage.setItem("cities", JSON.stringify(this.favoriteCities));
-    this.checkSpecificCity(this.displayWeather.city);
+    this.checkSpecificCity(this.City.city);
   }
   //Remove to the favorites
   removeFromFavorite(): void {
     this.checkIfExists();
     const index = this.favoriteCities.findIndex(
-      city => city.city === this.displayWeather.city
+      city => city.city === this.City.city
     );
     if (index >= 0) {
       this.favoriteCities.splice(index, 1);
       localStorage.removeItem("cities");
       localStorage.setItem("cities", JSON.stringify(this.favoriteCities));
-      this.checkSpecificCity(this.displayWeather.city);
+      this.checkSpecificCity(this.City.city);
     }
   }
   checkIfExists(): void {
@@ -249,7 +249,7 @@ export class WeatherCardComponent implements OnInit {
   }
 
   setModel(): void {
-    this.displayWeather = {
+    this.City = {
       key: 0,
       city: "",
       Country: {
@@ -277,11 +277,11 @@ export class WeatherCardComponent implements OnInit {
   }
 
   weatherCityData(intKey: number): void {
-    this.displayWeather.key = intKey;
-    this.displayWeather.dayTime = this.currentWeather.IsDayTime;
-    this.displayWeather.Temperature = this.currentWeather.Temperature;
-    this.displayWeather.weatherText = this.currentWeather.WeatherText;
-    this.displayWeather.WeatherIcon = this.currentWeather.WeatherIcon;
+    this.City.key = intKey;
+    this.City.dayTime = this.currentWeather.IsDayTime;
+    this.City.Temperature = this.currentWeather.Temperature;
+    this.City.weatherText = this.currentWeather.WeatherText;
+    this.City.WeatherIcon = this.currentWeather.WeatherIcon;
   }
 
   setData(): void {

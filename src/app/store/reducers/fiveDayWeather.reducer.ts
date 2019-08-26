@@ -1,10 +1,11 @@
 import {
-  WeatherActions, GET_FIVE_DAY_WEATHER,
-  GET_FIVE_DAY_WEATHER_SUCCESS, GET_FIVE_DAY_WEATHER_FAILED
-} from '../actions/weather.action';
+  WeatherActions,
+  GET_FIVE_DAY_WEATHER,
+  GET_FIVE_DAY_WEATHER_SUCCESS,
+  GET_FIVE_DAY_WEATHER_FAILED
+} from "../actions/weather.action";
 
 export interface State {
-
   data: any;
   loading: boolean;
   loaded: boolean;
@@ -13,11 +14,13 @@ export interface State {
 const initialState: State = {
   data: [],
   loading: true,
-  loaded: false,
+  loaded: false
 };
 
-export function fiveDayWeatherReducer(state = initialState, action: WeatherActions) {
-
+export function fiveDayWeatherReducer(
+  state = initialState,
+  action: WeatherActions
+) {
   switch (action.type) {
     case GET_FIVE_DAY_WEATHER:
       return {
@@ -47,4 +50,3 @@ export function fiveDayWeatherReducer(state = initialState, action: WeatherActio
 }
 
 export const getFiveDayWeatherData = (state: State) => state;
-

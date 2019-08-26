@@ -1,7 +1,12 @@
 import {
-  WeatherActions, GET_AUTO_COMPLETE_CITIES, GET_AUTO_COMPLETE_CITIES_SUCCESS, GET_AUTO_COMPLETE_CITIES_FAILED,
-  GET_CURRENT_WEATHER, GET_CURRENT_WEATHER_SUCCESS, GET_CURRENT_WEATHER_FAILED
-} from './../actions/weather.action';
+  WeatherActions,
+  GET_AUTO_COMPLETE_CITIES,
+  GET_AUTO_COMPLETE_CITIES_SUCCESS,
+  GET_AUTO_COMPLETE_CITIES_FAILED,
+  GET_CURRENT_WEATHER,
+  GET_CURRENT_WEATHER_SUCCESS,
+  GET_CURRENT_WEATHER_FAILED
+} from "./../actions/weather.action";
 
 export interface State {
   data: any;
@@ -18,7 +23,6 @@ const initialState: State = {
 export function weatherReducer(state = initialState, action: WeatherActions) {
   switch (action.type) {
     case GET_AUTO_COMPLETE_CITIES:
-
       return {
         ...state,
         loading: true,

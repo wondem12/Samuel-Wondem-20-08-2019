@@ -1,5 +1,9 @@
-import { WeatherActions, GET_GEOLOCATION_WEATHER, GET_GEOLOCATION_WEATHER_SUCCESS,
-GET_GEOLOCATION_WEATHER_FAILED } from '../actions/weather.action';
+import {
+  WeatherActions,
+  GET_GEOLOCATION_WEATHER,
+  GET_GEOLOCATION_WEATHER_SUCCESS,
+  GET_GEOLOCATION_WEATHER_FAILED
+} from "../actions/weather.action";
 
 export interface State {
   data: any;
@@ -13,8 +17,11 @@ const initialState: State = {
   loaded: false
 };
 
-export function geoLocationReducer(state = initialState, action: WeatherActions) {
-  switch(action.type) {
+export function geoLocationReducer(
+  state = initialState,
+  action: WeatherActions
+) {
+  switch (action.type) {
     case GET_GEOLOCATION_WEATHER:
       return {
         ...state,
@@ -41,4 +48,4 @@ export function geoLocationReducer(state = initialState, action: WeatherActions)
   }
 }
 
-export const getGeoLocationData = (state: State ) => state;
+export const getGeoLocationData = (state: State) => state;

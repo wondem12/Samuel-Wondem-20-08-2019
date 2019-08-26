@@ -1,7 +1,7 @@
 
 import { Component, OnInit } from '@angular/core';
-import { CityModel } from '../store/models/city.model';
-import { Data } from '../services/data.service';
+import { CityModel } from '../../store/models/city.model';
+import { Data } from '../../services/data.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -13,12 +13,9 @@ export class FavoritesComponent implements OnInit {
 
   public favoriteCities: CityModel[] = [];
   public exists: boolean;
-  public checked: boolean;
   public unit: boolean;
-  public loaded: boolean;
   constructor(private Data: Data, private router: Router) {
     this.exists = false;
-    this.loaded = false;
   }
 
   ngOnInit() {
@@ -35,9 +32,7 @@ export class FavoritesComponent implements OnInit {
     this.Data.changeCity(JSON.stringify(data));
     this.router.navigate(['/']);
   }
-  checkFavoriteCitiesExists() {
-    console.log('ddd');
-    
+  checkFavoriteCitiesExists() {    
     if (JSON.parse(localStorage.getItem('cities'))) {
       this.favoriteCities = JSON.parse(localStorage.getItem('cities'));
       this.exists = true;
