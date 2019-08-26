@@ -8,7 +8,7 @@ import { Injectable } from "@angular/core";
 @Injectable({ providedIn: "root" })
 export class WeatherService {
   Key = "aV10RuA4FiN1gsLhbD6kWSzQzklwaHKY";
-  Url = "http://dataservice.accuweather.com";
+  Url = "https://dataservice.accuweather.com";
 
   constructor(private http: HttpClient) {}
   getAutocomplete(text: string) {
